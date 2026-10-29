@@ -1,0 +1,18 @@
+{
+  "model": "sonnet",
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "haiku"
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/run-tests.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

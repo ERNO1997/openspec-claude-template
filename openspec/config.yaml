@@ -1,0 +1,35 @@
+# OpenSpec configuration for THIS project.
+# `context` is injected into every artifact (max 50 KB; every KB is paid on each generation,
+# so keep it short). `rules` only applies to the artifact with that name.
+# `operations` is advisory: the model reads it, but nothing enforces it.
+
+schema: spec-driven
+
+context: |
+  Project: TODO (what it is, in 1-2 lines)
+  Stack: TODO (languages, frameworks, database)
+  Tests: run with `npm test`   # TODO: the real command; keep it the same as TEST_CMD in .claude/hooks/run-tests.sh
+  Artifact language: English   # change this line if you want specs and proposals in another language
+  Do not touch: TODO (sensitive folders or files)
+  Prototypes and exploration notes: explore/<topic>/ (not part of this context; read them by path)
+
+rules:
+  proposal:
+    - State what is out of scope
+  specs:
+    - Every requirement has at least one scenario
+  design:
+    - If there is a prototype, reference it by path (explore/<topic>/); do not copy it
+  tasks:
+    - Each task is self-contained (files to touch, spec requirement, acceptance criterion)
+    - Group tasks in blocks of 3 to 5, using "- [ ]" checkboxes
+
+operations:
+  apply:
+    guidance:
+      - Implement at most one task group per session and stop when it is done
+      - If a task contradicts the spec or design.md, stop and explain the conflict. Do not edit specs or design.md during apply
+      - After each task group, run the tests and summarize only the failures
+  archive:
+    guidance:
+      - Keep the final summary short
