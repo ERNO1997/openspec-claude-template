@@ -7,6 +7,11 @@
 - [ ] Install `jq` (the QA hook uses it)
 - [ ] Note a usage baseline with `/usage` to compare later
 
+## Existing project (optional, before the steps below)
+- [ ] `./install.sh /path/to/project --with-audit`
+- [ ] `claude --model sonnet --effort medium`, then "Read read-before-delete.md and follow it."
+- [ ] Review the report, approve the changes you want, and let the agent delete `read-before-delete.md`
+
 ## Once per project
 - [ ] `openspec init --tools claude`
 - [ ] `./install.sh /path/to/project` (overwrites nothing; leaves `*.template` if the file already existed)

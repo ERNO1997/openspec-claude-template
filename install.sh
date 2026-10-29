@@ -4,12 +4,12 @@
 # ".template" suffix so you can merge it by hand (for example openspec/config.yaml,
 # which `openspec init` already creates).
 #
-# Usage: ./install.sh /path/to/project
+# Usage: ./install.sh /path/to/project [--with-audit]
 set -euo pipefail
 
 TARGET="${1:-}"
 if [ -z "$TARGET" ] || [ ! -d "$TARGET" ]; then
-  echo "Usage: ./install.sh /path/to/project" >&2
+  echo "Usage: ./install.sh /path/to/project [--with-audit]" >&2
   exit 1
 fi
 
@@ -33,6 +33,11 @@ copy .claude/settings.json
 copy .claude/hooks/run-tests.sh
 copy .claude/agents/test-runner.md
 copy explore/_TEMPLATE/notes.md
+
+# Optional audit briefing for existing projects. Pass --with-audit to include it.
+if [ "${2:-}" = "--with-audit" ]; then
+  copy read-before-delete.md
+fi
 
 chmod +x "$TARGET/.claude/hooks/run-tests.sh" 2>/dev/null || true
 [ -f "$TARGET/.claude/hooks/run-tests.sh.template" ] && chmod +x "$TARGET/.claude/hooks/run-tests.sh.template" || true

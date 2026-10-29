@@ -15,6 +15,7 @@ openspec/config.yaml          context, rules and operations
 .claude/hooks/run-tests.sh    QA outside the LLM (active with RUN_QA=1)
 .claude/agents/test-runner.md subagent that runs the tests and summarizes failures
 explore/_TEMPLATE/notes.md    handoff note between Explore and Propose
+read-before-delete.md         disposable audit briefing for existing projects (see below)
 install.sh                    copies everything into a project without overwriting files
 CHECKLIST.md                  steps per machine, per project and per change
 ```
@@ -30,6 +31,20 @@ openspec init --tools claude
 If a file already exists, the script leaves the template version next to it with a `.template` suffix
 so you can merge it by hand (this happens with `openspec/config.yaml`, which `openspec init` already creates).
 Then edit `context` and the test command (`TEST_CMD` in the hook).
+
+## Audit an existing project
+
+`read-before-delete.md` is a briefing for a Sonnet session. It summarizes this template's decisions and
+tells the agent how to audit a project that is already started: model pinning, always-loaded context,
+MCP servers and plugins, OpenSpec leftovers, large files, hooks. The agent reads cheaply, reports findings
+with evidence, and changes nothing until you approve. When you are done, it deletes the file.
+
+```bash
+cd your-existing-project
+/path/to/openspec-claude-template/install.sh . --with-audit   # or just copy read-before-delete.md
+claude --model sonnet --effort medium
+> Read read-before-delete.md and follow it.
+```
 
 To create new projects from GitHub, mark this repository as a "Template repository" in its
 settings and use "Use this template".
