@@ -6,6 +6,9 @@
 - [ ] `openspec config list` and check which workflows you have (are `sync` and `update` included?)
 - [ ] Install `jq` (the QA hook uses it)
 - [ ] Note a usage baseline with `/usage` to compare later
+- [ ] For each Claude account (each `CLAUDE_CONFIG_DIR`): merge `claude-user-settings.example.json` into its `settings.json`
+- [ ] Keep only the workflows you use (`openspec config set workflows propose,explore,apply,archive`, then `openspec update`)
+- [ ] Review enabled plugins per account and disable stale ones (project `enabledPlugins` overrides can go stale too)
 
 ## Existing project (optional, before the steps below)
 - [ ] `./install.sh /path/to/project --with-audit`
@@ -15,6 +18,7 @@
 ## Once per project
 - [ ] `openspec init --tools claude`
 - [ ] `./install.sh /path/to/project` (overwrites nothing; leaves `*.template` if the file already existed)
+- [ ] Merge every `*.template` file by hand, then delete it (note any template rule you chose not to keep)
 - [ ] Edit `context` in `openspec/config.yaml` (stack, test command)
 - [ ] Put the real test command in `.claude/hooks/run-tests.sh` (`TEST_CMD`)
 - [ ] Reopen Claude Code and check the hook with `/hooks`

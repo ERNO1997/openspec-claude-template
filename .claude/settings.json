@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/run-tests.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run-tests.sh"
           }
         ]
       }

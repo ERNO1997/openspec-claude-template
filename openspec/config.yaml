@@ -30,6 +30,8 @@ operations:
       - Implement at most one task group per session and stop when it is done
       - If a task contradicts the spec or design.md, stop and explain the conflict. Do not edit specs or design.md during apply
       - After each task group, run the tests and summarize only the failures
+      # If you keep a shared checks file (for example openspec/pending-checks.md), add:
+      # - Read only the sections of that file for areas this change touches
   archive:
     guidance:
       - Keep the final summary short

@@ -28,6 +28,8 @@ wastes tokens and to propose concrete fixes. You change nothing until the owner 
    contradicts them, report the contradiction and trust the observation. Run `claude --version` and `openspec --version` first.
 5. **Do not run the project's tests, builds or installs.** They cost time and tokens and are not needed here.
 6. **Never overwrite the owner's files.** Propose merges; where the template ships a file that already exists, the owner merges by hand.
+   When a merge is done, list the template rules that were not carried over (diff the `*.template` against the real file) and ask whether each omission is intended.
+7. **Several Claude accounts.** Ask the owner whether other config dirs exist (another `CLAUDE_CONFIG_DIR`, for example `~/Mine/.claude`) and audit the `settings.json` of each one, not only the current one.
 
 ## Background you need (the owner's decisions so far)
 
@@ -79,8 +81,8 @@ claude --version; openspec --version; openspec config list
 git status --short | head -20
 ls -la; ls -la .claude openspec 2>/dev/null
 wc -c CLAUDE.md AGENTS.md openspec/config.yaml openspec/project.md openspec/AGENTS.md .mcp.json 2>/dev/null
-wc -c .claude/settings.json .claude/settings.local.json ~/.claude/settings.json 2>/dev/null
-ls .claude/agents .claude/commands .claude/skills ~/.claude/agents ~/.claude/skills 2>/dev/null
+wc -c .claude/settings.json .claude/settings.local.json ${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json 2>/dev/null
+ls .claude/agents .claude/commands .claude/skills ${CLAUDE_CONFIG_DIR:-~/.claude}/agents ${CLAUDE_CONFIG_DIR:-~/.claude}/skills 2>/dev/null
 openspec list; openspec list --specs
 git ls-files | wc -l
 git ls-files -z | xargs -0 du -k 2>/dev/null | sort -rn | head -15
@@ -92,7 +94,7 @@ cat .gitignore 2>/dev/null | head -40
 For each item, record: evidence, why it costs tokens, a suggested fix, and the risk of the fix.
 
 **A. Model and effort pinning**
-- Is a `model` set in `.claude/settings.json`, `~/.claude/settings.json` or `ANTHROPIC_MODEL`? If not, Pro sessions run on Opus 5.5.
+- Is a `model` set in `.claude/settings.json`, `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` or `ANTHROPIC_MODEL`? If not, Pro sessions run on Opus 5.5.
 - Any `effortLevel`/`modelSettings` set high globally? Any `max`, `ultracode`, `MAX_THINKING_TOKENS` or Fable usage by default?
 - Is `CLAUDE_CODE_SUBAGENT_MODEL` set, or do custom subagents lack a `model`?
 - Does any skill or command frontmatter name a different `model`? (Each such turn is a model switch and an uncached re-read.)
@@ -100,9 +102,11 @@ For each item, record: evidence, why it costs tokens, a suggested fix, and the r
 **B. Always-loaded context (paid on every session start)**
 - Size of `CLAUDE.md` and `AGENTS.md`; duplicates between them; content that is only needed for one phase.
 - Size and content of `context` in `openspec/config.yaml`; prototypes, long API docs or file listings pasted into it.
-- Number and size of skills, commands and agents under `.claude/` and `~/.claude/`. Duplicate old (`/openspec:*`) and new (`/opsx:*`) command sets.
+- Number and size of skills, commands and agents under `.claude/` and `${CLAUDE_CONFIG_DIR:-~/.claude}/`. Duplicate old (`/openspec:*`) and new (`/opsx:*`) command sets.
 - MCP servers in `.mcp.json` or settings: list them, say which the project does not need.
-- Plugins enabled that the project does not use.
+- Plugins enabled that the project does not use, and project `enabledPlugins` overrides that name plugins no longer installed.
+- Files that `config.yaml` or `CLAUDE.md` tell every session to read (for example a shared checks or notes file): list each with its size and whether it keeps growing. Suggest per-area sections or an index.
+- Note: command files under `.claude/commands/` cost tokens only when invoked, so judge them by the number of workflows installed, not by total bytes.
 
 **C. OpenSpec hygiene**
 - Legacy files: `openspec/project.md`, `openspec/AGENTS.md`, old command files.
@@ -119,10 +123,12 @@ For each item, record: evidence, why it costs tokens, a suggested fix, and the r
 
 **E. Workflow and hooks**
 - Existing hooks in settings: any that run on every `PostToolUse`/`Stop` and cost time or tokens? Any `Stop` hook without a `stop_hook_active` check?
+- Hook commands with a relative path (`.claude/hooks/x.sh`): they break when Claude runs from a subfolder. Suggest `"$CLAUDE_PROJECT_DIR"/.claude/hooks/x.sh`. Check the script is executable.
 - Are tests run by the LLM through long command output? Suggest the template's `run-tests.sh` + `test-runner` subagent.
 - Is there a place for exploration notes (`explore/`) and is it referenced by path rather than pasted?
 
 **F. Anything else you notice** that clearly burns tokens (for example huge instruction files, a task list in prose, or a spec that restates the codebase).
+Also report leftovers of a half-finished install or migration seen in `git status`: `*.template` files, deleted skills or `AGENTS.md`, files in `MM` state. Ask whether the merge is finished.
 
 ## Step 3: report (this is your main output)
 
@@ -135,7 +141,7 @@ Write the report in chat; do not create files. Use this shape:
 |---|---|---|---|---|---|
 
 3. **Proposed changes**, grouped as: (a) safe and reversible, (b) needs the owner's judgment, (c) do not touch. For each, show the exact edit or command, but do not run it.
-4. **What the template would add or change** in this project, file by file, and which existing files would need a manual merge.
+4. **What the template would add or change** in this project, file by file, and which existing files would need a manual merge. Skip this section if the template was already installed (`.claude/hooks/run-tests.sh` exists); then list only the `*.template` leftovers and omitted rules.
 5. **What you could not verify** (for example actual per-session consumption; suggest the owner compares `/usage` before and after).
 
 ## Step 4: after the report

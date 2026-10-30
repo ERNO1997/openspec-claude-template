@@ -19,4 +19,5 @@ One or two sentences: what will be done.
 ## Next step
 `/opsx:propose <change-name>` in a new session, reading this file.
 
-<!-- Keep this note to 10-20 lines: it is the only thing that goes into context. Open prototypes by path only when a task needs them. -->
+<!-- Keep this note to 10-20 lines: it is the only thing that goes into context. Prototypes are reference-only:
+open them by path only when a task needs them, and delete them once the change is archived. -->

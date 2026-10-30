@@ -16,6 +16,7 @@ openspec/config.yaml          context, rules and operations
 .claude/agents/test-runner.md subagent that runs the tests and summarizes failures
 explore/_TEMPLATE/notes.md    handoff note between Explore and Propose
 read-before-delete.md         disposable audit briefing for existing projects (see below)
+claude-user-settings.example.json  per-account settings (model, effort) to merge into each config dir
 install.sh                    copies everything into a project without overwriting files
 CHECKLIST.md                  steps per machine, per project and per change
 ```
@@ -79,7 +80,7 @@ a new session with Opus updates `design.md`, the specs and `tasks.md` of the sam
 
 | Scope | OpenSpec | Claude Code |
 |---|---|---|
-| Your machine | `openspec config` (profile, delivery, workflows) | `~/.claude/settings.json`, `~/.claude/agents/` |
+| Your machine | `openspec config` (profile, delivery, workflows) | `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json`, `${CLAUDE_CONFIG_DIR:-~/.claude}/agents/` |
 | One project | `openspec/config.yaml` (context, rules, operations) | `.claude/settings.json`, `.claude/hooks/`, `.claude/agents/` |
 | One change | `openspec/changes/<n>/` | the session: `--model`, `--effort`, `/clear` |
 

@@ -1,0 +1,15 @@
+{
+  "model": "sonnet",
+  "effortLevel": "medium",
+  "modelSettings": {
+    "claude-haiku-5-5": {
+      "effortLevel": "low"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "medium"
+    }
+  }
+}
