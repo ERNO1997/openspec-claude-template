@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Moves explore/<name> to explore/archive/YYYY-MM-DD-<name>, like openspec does for
+# changes. Does not touch openspec. Run it from the project root.
+#
+# Usage: bin/opsx:archive-explore <name>
+set -euo pipefail
+
+NAME="${1:-}"
+if [ -z "$NAME" ] || [ "$#" -gt 1 ]; then
+  echo "Usage: bin/opsx:archive-explore <name>" >&2
+  exit 1
+fi
+
+case "$NAME" in
+  */* | .* | archive | _TEMPLATE)
+    echo "Invalid name: $NAME" >&2
+    exit 1
+    ;;
+esac
+
+SRC="explore/$NAME"
+DEST="explore/archive/$(date +%Y-%m-%d)-$NAME"
+
+if [ ! -d "$SRC" ]; then
+  echo "= no $SRC folder, nothing to archive in explore/"
+  exit 0
+fi
+
+if [ -e "$DEST" ]; then
+  echo "! $DEST already exists, leaving $SRC in place" >&2
+  exit 1
+fi
+
+mkdir -p explore/archive
+mv "$SRC" "$DEST"
+echo "+ archived: $SRC -> $DEST"

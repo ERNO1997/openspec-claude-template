@@ -33,13 +33,15 @@ copy .claude/settings.json
 copy .claude/hooks/run-tests.sh
 copy .claude/agents/test-runner.md
 copy explore/_TEMPLATE/notes.md
+copy 'bin/opsx:archive'
+copy 'bin/opsx:archive-explore'
 
 # Optional audit briefing for existing projects. Pass --with-audit to include it.
 if [ "${2:-}" = "--with-audit" ]; then
   copy read-before-delete.md
 fi
 
-chmod +x "$TARGET/.claude/hooks/run-tests.sh" 2>/dev/null || true
+chmod +x "$TARGET/.claude/hooks/run-tests.sh" "$TARGET/bin/opsx:archive" "$TARGET/bin/opsx:archive-explore" 2>/dev/null || true
 [ -f "$TARGET/.claude/hooks/run-tests.sh.template" ] && chmod +x "$TARGET/.claude/hooks/run-tests.sh.template" || true
 
 if ! command -v jq >/dev/null 2>&1; then

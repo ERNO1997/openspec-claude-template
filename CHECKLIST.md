@@ -10,6 +10,13 @@
 - [ ] Keep only the workflows you use (`openspec config set workflows propose,explore,apply,archive`, then `openspec update`)
 - [ ] Review enabled plugins per account and disable stale ones (project `enabledPlugins` overrides can go stale too)
 
+## New project (instead of "Once per project" below)
+- [ ] `./new-project.sh /path/to/project --about "..." --stack "..." --test "..."` (or "Use this template" on the boilerplate repo, then `openspec init --tools claude`)
+- [ ] `claude --model opus --effort medium`, then "Read kickoff.md and follow it."
+- [ ] Review `openspec/config.yaml`, `.claude/hooks/run-tests.sh` and `explore/kickoff/notes.md`; let the agent delete `kickoff.md`
+- [ ] Reopen Claude Code and check the hook with `/hooks`
+- [ ] First commit (yourself), then the first change: `project-skeleton` (see "For each change")
+
 ## Existing project (optional, before the steps below)
 - [ ] `./install.sh /path/to/project --with-audit`
 - [ ] `claude --model sonnet --effort medium`, then "Read read-before-delete.md and follow it."
@@ -34,5 +41,5 @@
 - [ ] Apply: `RUN_QA=1 claude --model sonnet --effort medium`, then `/opsx:apply <name>`
 - [ ] `/clear` between groups of 3 to 5 tasks
 - [ ] If Apply stops over the design: new session with Opus, update design/specs/tasks, validate and resume
-- [ ] Archive: `openspec archive <name> -y` (or `/opsx:archive`) and review `openspec/specs/`
+- [ ] Archive: `bin/opsx:archive <name>` (runs `openspec archive <name> -y` and moves `explore/<name>` to `explore/archive/`) and review `openspec/specs/`
 - [ ] Final commit

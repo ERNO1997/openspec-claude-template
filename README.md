@@ -15,11 +15,52 @@ openspec/config.yaml          context, rules and operations
 .claude/hooks/run-tests.sh    QA outside the LLM (active with RUN_QA=1)
 .claude/agents/test-runner.md subagent that runs the tests and summarizes failures
 explore/_TEMPLATE/notes.md    handoff note between Explore and Propose
+bin/opsx:archive <name>       `openspec archive <name> -y` + moves explore/<name> to explore/archive/
+bin/opsx:archive-explore <name>  only moves explore/<name> to explore/archive/
 read-before-delete.md         disposable audit briefing for existing projects (see below)
+kickoff.md                    disposable kickoff briefing for new projects (see below)
+new-project.sh                creates a new project: git init, template, openspec init, context, kickoff.md
+make-boilerplate.sh           exports a clean boilerplate for a GitHub template repository
 claude-user-settings.example.json  per-account settings (model, effort) to merge into each config dir
 install.sh                    copies everything into a project without overwriting files
 CHECKLIST.md                  steps per machine, per project and per change
 ```
+
+## Start a new project
+
+```bash
+/path/to/openspec-claude-template/new-project.sh ~/code/my-app \
+  --about "What it is, in one line" --stack "TS, Next.js, Postgres" --test "npm test"
+cd ~/code/my-app
+claude --model opus --effort medium
+> Read kickoff.md and follow it.
+```
+
+`new-project.sh` needs an empty or missing folder. It runs `git init`, installs the template, runs
+`openspec init --tools claude` (which keeps the template's `config.yaml`, so there is nothing to merge),
+fills `context` and `TEST_CMD` with the values you pass (it asks for missing ones; Enter leaves `TODO`)
+and copies `kickoff.md`. It does not commit.
+
+`kickoff.md` is a briefing for an Opus session. The agent interviews you (goal, v1 scope, out of scope,
+stack, tests, constraints), finishes `context` and `TEST_CMD`, writes `explore/kickoff/notes.md` with the
+first changes in order (always starting with `project-skeleton`), writes no code, and deletes itself.
+Then the normal flow starts with `/opsx:propose project-skeleton` in a new session.
+
+### From a GitHub template repository
+
+This repository stays the source (install, audit, docs). The boilerplate for new projects lives in its
+own repository, generated from this one:
+
+```bash
+./make-boilerplate.sh ../openspec-claude-boilerplate   # overwrites only the files it manages
+cd ../openspec-claude-boilerplate && git init && git add -A && git commit -m "Boilerplate"
+gh repo create openspec-claude-boilerplate --private --source . --push
+gh repo edit --template
+```
+
+New projects then use "Use this template" (or `gh repo create my-app --template <owner>/openspec-claude-boilerplate --clone`),
+followed by `openspec init --tools claude` and the kickoff. When you change the template here, run
+`make-boilerplate.sh` again on the same folder, review the diff and push.
 
 ## Install into a project
 
@@ -46,9 +87,6 @@ cd your-existing-project
 claude --model sonnet --effort medium
 > Read read-before-delete.md and follow it.
 ```
-
-To create new projects from GitHub, mark this repository as a "Template repository" in its
-settings and use "Use this template".
 
 ## Workflow
 

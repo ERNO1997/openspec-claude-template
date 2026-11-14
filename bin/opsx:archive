@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Archives a change the way /opsx:archive does, and also moves its prototypes:
+#   openspec archive <name> -y
+#   explore/<name>  ->  explore/archive/YYYY-MM-DD-<name>
+# Run it from the project root.
+#
+# Usage: bin/opsx:archive <name>
+set -euo pipefail
+
+NAME="${1:-}"
+if [ -z "$NAME" ] || [ "$#" -gt 1 ]; then
+  echo "Usage: bin/opsx:archive <name>" >&2
+  exit 1
+fi
+
+openspec archive "$NAME" -y
+"$(cd "$(dirname "$0")" && pwd)/opsx:archive-explore" "$NAME"
